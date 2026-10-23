@@ -12,6 +12,7 @@ const Navbar = ({ onToggleSidebar }) => {
   const getPageTitle = () => {
     const path = location.pathname;
     if (path === '/' || path === '/dashboard') return 'Dashboard Overview';
+    if (path === '/requests') return 'Borrow Requests & Approvals';
     if (path === '/books') return 'Book Catalog & Inventory';
     if (path === '/books/add') return 'Add New Book';
     if (path.startsWith('/books/edit')) return 'Edit Book Record';

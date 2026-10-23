@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const AdminLayout = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   if (isLoading) {
@@ -27,6 +27,10 @@ const AdminLayout = () => {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/user/dashboard" replace />;
   }
 
   return (

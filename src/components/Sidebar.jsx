@@ -10,6 +10,7 @@ import {
   ClipboardList,
   AlertTriangle,
   BookMarked,
+  Inbox,
   X,
 } from 'lucide-react';
 
@@ -22,6 +23,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
 
   const navLinks = [
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/requests', label: 'Borrow Requests', icon: Inbox },
     { to: '/books', label: 'Manage Books', icon: BookOpen },
     { to: '/books/add', label: 'Add Book', icon: PlusCircle },
     { to: '/students', label: 'Manage Members', icon: Users },

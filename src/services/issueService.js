@@ -20,4 +20,10 @@ export const issueService = {
     const res = await api.put(`/issues/${id}/return`);
     return res.data;
   },
+
+  getMyIssues: async (params = {}) => {
+    const res = await api.get('/issues/my', { params });
+    return res.data;
+  },
 };
+

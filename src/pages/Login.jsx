@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
@@ -12,11 +12,12 @@ import {
   EyeOff,
   Loader2,
   AlertCircle,
+  UserCheck,
 } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const { showToast } = useToast();
 
   const [email, setEmail] = useState('');
@@ -25,9 +26,9 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // If already logged in, redirect to dashboard
+  // If already logged in, redirect to respective dashboard
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={user?.role === 'admin' ? '/dashboard' : '/user/dashboard'} replace />;
   }
 
   const handleSubmit = async (e) => {
@@ -41,9 +42,14 @@ const Login = () => {
 
     try {
       setIsLoading(true);
-      await login(email.trim(), password);
-      showToast('Welcome back, Admin! Successfully logged in.', 'success');
-      navigate('/dashboard');
+      const data = await login(email.trim(), password);
+      if (data.user?.role === 'admin') {
+        showToast('Welcome back, Admin! Successfully logged in.', 'success');
+        navigate('/dashboard');
+      } else {
+        showToast(`Welcome back, ${data.user?.name || 'Member'}!`, 'success');
+        navigate('/user/dashboard');
+      }
     } catch (err) {
       const message =
         err.response?.data?.message || 'Invalid email or password. Please try again.';
@@ -174,7 +180,7 @@ const Login = () => {
             }}
           >
             <ShieldCheck size={13} strokeWidth={2.4} />
-            <span>Administrator Portal</span>
+            <span>Libra Authentication Portal</span>
           </div>
 
           {/* Title & Subtitle */}
@@ -198,7 +204,7 @@ const Login = () => {
               margin: 0,
             }}
           >
-            Digital Library Administration & Catalog Management
+            Sign in with your administrator or student library account
           </p>
         </div>
 
@@ -246,7 +252,7 @@ const Login = () => {
                 marginBottom: '6px',
               }}
             >
-              Admin Email Address
+              Email Address
             </label>
             <div style={{ position: 'relative' }}>
               <Mail
@@ -396,18 +402,40 @@ const Login = () => {
               </>
             ) : (
               <>
-                <span>Sign In as Administrator</span>
+                <span>Sign In to Libra</span>
                 <ArrowRight size={18} />
               </>
             )}
           </button>
         </form>
 
+        {/* Member Registration Link */}
+        <div
+          style={{
+            marginTop: '20px',
+            textAlign: 'center',
+            fontSize: '0.86rem',
+            color: '#64748b',
+          }}
+        >
+          <span>Student without an account? </span>
+          <Link
+            to="/register"
+            style={{
+              color: '#4f46e5',
+              fontWeight: 700,
+              textDecoration: 'none',
+            }}
+          >
+            Register Here
+          </Link>
+        </div>
+
         {/* Professional Security Footer Note inside Card */}
         <div
           style={{
-            marginTop: '28px',
-            paddingTop: '20px',
+            marginTop: '24px',
+            paddingTop: '18px',
             borderTop: '1px solid #f1f5f9',
             display: 'flex',
             alignItems: 'center',
@@ -419,7 +447,7 @@ const Login = () => {
           }}
         >
           <ShieldCheck size={15} style={{ color: '#10b981', flexShrink: 0 }} />
-          <span>Restricted Access • Authorized Library Administrators Only</span>
+          <span>Secure Multi-Role Access • Administrators & Registered Members</span>
         </div>
       </div>
 

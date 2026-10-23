@@ -53,6 +53,17 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const register = async (userData) => {
+    const data = await authService.register(userData);
+    if (data.success && data.token) {
+      setToken(data.token);
+      setUser(data.user);
+      localStorage.setItem('libra_token', data.token);
+      localStorage.setItem('libra_user', JSON.stringify(data.user));
+    }
+    return data;
+  };
+
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -66,8 +77,11 @@ export const AuthProvider = ({ children }) => {
         user,
         token,
         isAuthenticated: !!token,
+        isAdmin: user?.role === 'admin',
+        isUser: user?.role === 'user',
         isLoading,
         login,
+        register,
         logout,
       }}
     >
